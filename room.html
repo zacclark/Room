@@ -25,7 +25,7 @@
 					saving = true;
 				});
 				// start main
-				var scaling_factor = 2;
+				var scaling_factor = 2.5;
 				var dim_to_px = function(dim) {
 					return dim*scaling_factor;
 				}
@@ -150,7 +150,7 @@
 						
 						title.css({
 							display:'block',
-							"margin-top":(dim_to_px( piece.height ) / 2) - 10
+							"margin-top":(style_height / 2) - 10
 						});
 						elem.css({
 							position: 'absolute',
