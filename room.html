@@ -12,6 +12,7 @@
 		</style>
 		<script type="text/javascript" charset="utf-8" src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
 		<script type="text/javascript" charset="utf-8" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.14/jquery-ui.min.js"></script>
+		<script type="text/javascript" charset="utf-8" src="./item.js"></script>
 		<script type="text/javascript" charset="utf-8">
 			// TODO
 			// save all when save turned back on
@@ -19,8 +20,8 @@
 		
 			$(document).ready(function(){
 				// globals
-				saving = true;
-				double_click_seconds = 0.5;
+				window.saving = true;
+				window.double_click_seconds = 0.5;
 				$('#saving').toggle(function(){
 					$(this).text('Turn saving on')
 					saving = false;
@@ -30,10 +31,10 @@
 				});
 				// start main
 				var scaling_factor = 2.5;
-				var dim_to_px = function(dim) {
+				dim_to_px = function(dim) {
 					return dim*scaling_factor;
 				}
-				var px_to_dim = function(px) {
+				px_to_dim = function(px) {
 					return px/scaling_factor;
 				}
 				
@@ -144,86 +145,8 @@
 				];
 				
 				$.each(pieces, function(i, piece){
-					var elem = $('<div></div>');
-					var title = $('<span>' + piece.title + '</span>');
-					var rotated = false;
-					
-					var save = function() {
-						if (saving) {
-							window.localStorage[piece.title] = [
-								px_to_dim( elem.css('top').replace('px', '') ),
-								px_to_dim( elem.css('left').replace('px', '') ),
-								rotated
-							].join(",")
-						}
-					}
-					
-					if ( typeof(window.localStorage[piece.title]) != 'undefined' ) {
-						var arr = window.localStorage[piece.title].split(",");
-						elem.css({
-							top: dim_to_px( parseInt(arr[0]) ),
-							left: dim_to_px( parseInt(arr[1]) )
-						});
-						if (arr[2] == "true") {
-							rotated = true;
-						}
-					}
-					
-					elem.append(title);
-					
-					var style = function(){
-						var style_height = dim_to_px(piece.height) - 2;
-						var style_width  = dim_to_px(piece.width) - 2;
-						
-						if (rotated) {
-							var temp = style_height;
-							style_height = style_width;
-							style_width = temp;
-						}
-						
-						title.css({
-							display:'block',
-							"margin-top":(style_height / 2) - 10
-						});
-						elem.css({
-							position: 'absolute',
-							width: style_width,
-							height: style_height,
-							border: '1px solid #000',
-							cursor: 'pointer',
-							overflow: 'hidden',
-							"text-align": "center",
-							"font-size":'10px',
-							background:'rgba(255,255,255,0.8)'
-						});
-					}
-					style();
-					
-					if ( typeof(piece.circle) != 'undefined' && piece.circle == true ){
-						elem.css({
-							"-webkit-border-radius":dim_to_px(piece.width)
-						});
-					}
-					room.append(elem);
-					elem.draggable({
-						containment: "parent",
-						stop: function(){
-							// var offsetTop = $(this).css('top');
-							// var offsetLeft = $(this).css('left');
-							// if (saving) window.localStorage[piece.title] = offsetTop + "," + offsetLeft;
-							save();
-						}
-					});
-					var last_click_time = Date.now();
-					elem.click(function(){
-						var this_click_time = Date.now();
-						if (this_click_time - last_click_time < double_click_seconds * 1000) {
-							rotated = !rotated;
-							style();
-							save();
-						}
-						last_click_time = this_click_time;
-					});
+					var item = new Item(piece.title, piece.width, piece.height, piece.circle);
+					room.append(item.elem);
 				});
 			});
 		</script>
